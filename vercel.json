@@ -20,6 +20,6 @@
         "env": {
             "PIP_VERSION": "24.0"
         },
-        "command": "pip install -r requirements.txt"
+        "command": "pip install -r requirements.txt && flask db upgrade"
     }
 } 
