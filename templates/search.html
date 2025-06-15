@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card animate__animated animate__fadeIn">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">
+                    <i class="fas fa-search text-primary me-2"></i>Search Messages
+                </h2>
+                <form method="GET" action="{{ url_for('search') }}" class="mb-4">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" class="form-control" name="query" placeholder="Search messages..." value="{{ request.args.get('query', '') }}">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" name="category">
+                                <option value="">All Categories</option>
+                                <option value="compliment" {% if request.args.get('category') == 'compliment' %}selected{% endif %}>Compliment</option>
+                                <option value="feedback" {% if request.args.get('category') == 'feedback' %}selected{% endif %}>Feedback</option>
+                                <option value="question" {% if request.args.get('category') == 'question' %}selected{% endif %}>Question</option>
+                                <option value="other" {% if request.args.get('category') == 'other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search me-1"></i>Search
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                {% if messages %}
+                    <div class="search-results">
+                        <h4 class="mb-3">
+                            <i class="fas fa-list text-primary me-2"></i>Search Results
+                            <span class="badge bg-primary ms-2">{{ messages|length }} found</span>
+                        </h4>
+                        {% for message in messages %}
+                            <div class="message-card card mb-3">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="category-badge category-{{ message.category }}">
+                                            <i class="fas fa-tag me-1"></i>{{ message.category|title }}
+                                        </span>
+                                        <small class="text-muted">
+                                            <i class="fas fa-clock me-1"></i>{{ message.timestamp.strftime('%Y-%m-%d %H:%M') }}
+                                        </small>
+                                    </div>
+                                    <p class="card-text">{{ message.content }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            {% if message.is_anonymous %}
+                                                <span class="text-muted">
+                                                    <i class="fas fa-mask me-1"></i>Anonymous
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">
+                                                    <i class="fas fa-user me-1"></i>{{ message.sender.username }}
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <span class="badge bg-info me-2">
+                                                <i class="fas fa-heart me-1"></i>{{ message.likes }}
+                                            </span>
+                                            <span class="badge bg-info">
+                                                <i class="fas fa-smile me-1"></i>{{ message.smiles }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% elif request.args.get('query') %}
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-search fa-3x mb-3"></i>
+                        <p>No messages found matching your search criteria.</p>
+                    </div>
+                {% else %}
+                    <div class="text-center text-muted py-5">
+                        <i class="fas fa-search fa-3x mb-3"></i>
+                        <p>Enter a search term to find messages.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Add animation to cards on scroll
+const observerOptions = {
+    threshold: 0.1
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+            observer.unobserve(entry.target);
+        }
+    });
+}, observerOptions);
+
+document.querySelectorAll('.message-card').forEach(card => {
+    observer.observe(card);
+});
+
+// Add animation to search form
+document.querySelectorAll('.form-control, .form-select').forEach(element => {
+    element.addEventListener('focus', function() {
+        this.parentElement.classList.add('animate__animated', 'animate__pulse');
+    });
+    
+    element.addEventListener('blur', function() {
+        this.parentElement.classList.remove('animate__animated', 'animate__pulse');
+    });
+});
+</script>
+{% endblock %} 

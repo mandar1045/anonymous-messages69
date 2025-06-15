@@ -1,0 +1,25 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "wsgi.py",
+            "use": "@vercel/python"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "wsgi.py"
+        }
+    ],
+    "env": {
+        "FLASK_ENV": "production",
+        "PYTHONPATH": "."
+    },
+    "build": {
+        "env": {
+            "PIP_VERSION": "24.0"
+        },
+        "command": "pip install -r requirements.txt"
+    }
+} 

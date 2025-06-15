@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white rounded-lg shadow-lg p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Messages for {{ recipient }}</h1>
+            <a href="{{ url_for('home') }}" class="text-blue-600 hover:text-blue-800">← Back to Home</a>
+        </div>
+
+        {% if messages %}
+            <div class="space-y-4">
+                {% for message in messages %}
+                    <div class="bg-gray-50 rounded-lg p-4 shadow">
+                        <p class="text-gray-800">{{ message.content }}</p>
+                        <p class="text-sm text-gray-500 mt-2">
+                            Received on {{ message.timestamp.strftime('%B %d, %Y at %I:%M %p') }}
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center py-8">
+                <p class="text-gray-600">No messages yet. Share your name with others to receive anonymous messages!</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

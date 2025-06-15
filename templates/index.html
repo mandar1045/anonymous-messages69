@@ -1,0 +1,428 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <!-- Total Users Card -->
+        <div class="card mb-4 animate__animated animate__fadeIn">
+            <div class="card-body text-center">
+                <h3 class="card-title mb-4">
+                    <i class="fas fa-chart-line text-primary me-2"></i>Community Stats
+                </h3>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="stats-item">
+                            <div class="stats-icon mb-3">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stats-number display-6 fw-bold">{{ total_users }}</div>
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-user-plus me-1"></i>Users
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stats-item">
+                            <div class="stats-icon mb-3">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="stats-number display-6 fw-bold">{{ total_messages }}</div>
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-paper-plane me-1"></i>Messages
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stats-item">
+                            <div class="stats-icon mb-3">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="stats-number display-6 fw-bold">{{ total_reactions }}</div>
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-smile me-1"></i>Reactions
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="stats-item">
+                            <div class="stats-icon mb-3">
+                                <i class="fas fa-mask"></i>
+                            </div>
+                            <div class="stats-number display-6 fw-bold">{{ total_anonymous }}</div>
+                            <div class="progress mb-2" style="height: 20px;">
+                                <div class="progress-bar bg-primary" role="progressbar" 
+                                     style="width: {{ (total_anonymous / total_messages * 100) if total_messages > 0 else 0 }}%"
+                                     aria-valuenow="{{ (total_anonymous / total_messages * 100) if total_messages > 0 else 0 }}" 
+                                     aria-valuemin="0" aria-valuemax="100">
+                                    {{ (total_anonymous / total_messages * 100)|round|int if total_messages > 0 else 0 }}%
+                                </div>
+                            </div>
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-user-secret me-1"></i>Anonymous Messages
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="stats-item">
+                            <div class="stats-icon mb-3">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <div class="stats-number display-6 fw-bold">
+                                {% if most_active_category %}
+                                    {{ most_active_category }}
+                                {% else %}
+                                    None
+                                {% endif %}
+                            </div>
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-star me-1"></i>Most Active Category
+                            </p>
+                            {% if total_messages > 0 %}
+                                <div class="progress mb-2" style="height: 20px;">
+                                    <div class="progress-bar bg-primary" role="progressbar" 
+                                         style="width: {{ (most_active_category_count / total_messages * 100)|round|int }}%"
+                                         aria-valuenow="{{ (most_active_category_count / total_messages * 100)|round|int }}" 
+                                         aria-valuemin="0" aria-valuemax="100">
+                                        {{ (most_active_category_count / total_messages * 100)|round|int }}%
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-divider mt-4 mb-3">
+                    <span class="line"></span>
+                    <span class="circle"></span>
+                    <span class="line"></span>
+                </div>
+                <p class="text-muted small">
+                    Join our growing community today!
+                </p>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="stats-item">
+                    <div class="stats-icon mb-3">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stats-number display-6 fw-bold">{{ total_users }}</div>
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-user me-1"></i>Registered Users
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-item">
+                    <div class="stats-icon mb-3">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="stats-number display-6 fw-bold">{{ total_messages }}</div>
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-paper-plane me-1"></i>Total Messages
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stats-item">
+                    <div class="stats-icon mb-3">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="stats-number display-6 fw-bold">{{ total_reactions }}</div>
+                    <p class="text-muted mb-0">
+                        <i class="fas fa-smile me-1"></i>Reactions
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registered Users Section -->
+        <div class="card mb-4 animate__animated animate__fadeIn">
+            <div class="card-body">
+                <h3 class="card-title mb-4">
+                    <i class="fas fa-users text-primary me-2"></i>Registered Users
+                </h3>
+                <div class="row">
+                    {% for user in registered_users %}
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="card bg-light h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-user-circle fa-2x text-primary mb-2"></i>
+                                    <h5 class="card-title mb-0">{{ user.username }}</h5>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .stats-icon {
+                background: rgba(var(--bs-primary-rgb), 0.1);
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto;
+                font-size: 1.5rem;
+                color: var(--bs-primary);
+                transition: transform 0.3s ease;
+            }
+            
+            .stats-item:hover .stats-icon {
+                transform: scale(1.1);
+            }
+            
+            .stats-number {
+                background: linear-gradient(45deg, var(--bs-primary), #6f42c1);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            }
+            
+            .stats-divider {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .stats-divider .line {
+                height: 1px;
+                width: 50px;
+                background: rgba(0,0,0,0.1);
+            }
+            
+            .stats-divider .circle {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--bs-primary);
+            }
+
+            .stats-item {
+                padding: 1.5rem;
+                border-radius: 10px;
+                transition: all 0.3s ease;
+                background: rgba(255, 255, 255, 0.5);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
+            }
+
+            .stats-item:hover {
+                background: rgba(var(--bs-primary-rgb), 0.05);
+                transform: translateY(-5px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            }
+
+            .progress {
+                background-color: rgba(var(--bs-primary-rgb), 0.1);
+                border-radius: 2px;
+            }
+
+            .progress-bar {
+                background: linear-gradient(45deg, var(--bs-primary), #6f42c1);
+            }
+
+            .activity-list {
+                max-height: 400px;
+                overflow-y: auto;
+            }
+
+            .activity-item {
+                display: flex;
+                align-items: flex-start;
+                padding: 1rem;
+                border-radius: 8px;
+                margin-bottom: 0.5rem;
+                background: rgba(255, 255, 255, 0.5);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
+                transition: all 0.3s ease;
+            }
+
+            .activity-item:hover {
+                background: rgba(var(--bs-primary-rgb), 0.05);
+                transform: translateX(5px);
+            }
+
+            .activity-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: rgba(var(--bs-primary-rgb), 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 1rem;
+                color: var(--bs-primary);
+                flex-shrink: 0;
+            }
+
+            .activity-content {
+                flex-grow: 1;
+            }
+
+            .activity-content p {
+                margin: 0;
+                color: #333;
+            }
+
+            .activity-content small {
+                font-size: 0.8rem;
+            }
+
+            /* Custom scrollbar for activity list */
+            .activity-list::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            .activity-list::-webkit-scrollbar-track {
+                background: rgba(var(--bs-primary-rgb), 0.1);
+                border-radius: 3px;
+            }
+
+            .activity-list::-webkit-scrollbar-thumb {
+                background: var(--bs-primary);
+                border-radius: 3px;
+            }
+
+            .activity-list::-webkit-scrollbar-thumb:hover {
+                background: #6f42c1;
+            }
+        </style>
+
+        <div class="card mb-4 animate__animated animate__fadeIn">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">
+                    <i class="fas fa-paper-plane text-primary me-2"></i>Send a Message
+                </h2>
+                <form method="POST" action="{{ url_for('send_message') }}" class="needs-validation" novalidate>
+                    <div class="mb-3">
+                        <label for="recipient" class="form-label">
+                            <i class="fas fa-user me-2"></i>Recipient's Username
+                        </label>
+                        <input type="text" class="form-control" id="recipient" name="recipient" required>
+                        <div class="invalid-feedback">Please enter a recipient's username.</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="category" class="form-label">
+                            <i class="fas fa-tag me-2"></i>Message Category
+                        </label>
+                        <select class="form-select" id="category" name="category" required>
+                            <option value="">Select a category</option>
+                            <option value="compliment">Compliment</option>
+                            <option value="feedback">Feedback</option>
+                            <option value="question">Question</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <div class="invalid-feedback">Please select a category.</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="message" class="form-label">
+                            <i class="fas fa-comment-alt me-2"></i>Your Message
+                        </label>
+                        <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                        <div class="invalid-feedback">Please enter your message.</div>
+                    </div>
+                    
+                    {% if current_user.is_authenticated %}
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="anonymous" name="anonymous">
+                        <label class="form-check-label" for="anonymous">
+                            <i class="fas fa-mask me-2"></i>Send anonymously
+                        </label>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-paper-plane me-2"></i>Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card animate__animated animate__fadeIn">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">
+                    <i class="fas fa-envelope-open-text text-primary me-2"></i>View Messages
+                </h2>
+                <form method="GET" action="{{ url_for('view_messages', username='') }}" class="mb-4" id="viewMessagesForm">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="username" id="viewUsername" placeholder="Enter username to view messages" required>
+                        <button class="btn btn-primary" type="submit">
+                            <i class="fas fa-search me-2"></i>View Messages
+                        </button>
+                    </div>
+                </form>
+
+                {% if not current_user.is_authenticated %}
+                <div class="alert alert-info animate__animated animate__fadeIn">
+                    <h4 class="alert-heading">
+                        <i class="fas fa-info-circle me-2"></i>Create an Account!
+                    </h4>
+                    <p class="mb-0">Get access to more features:</p>
+                    <ul class="mt-2 mb-0">
+                        <li>Send non-anonymous messages</li>
+                        <li>Track your sent messages</li>
+                        <li>Receive email notifications</li>
+                        <li>React to messages</li>
+                    </ul>
+                    <hr>
+                    <div class="text-center">
+                        <a href="{{ url_for('register') }}" class="btn btn-primary">
+                            <i class="fas fa-user-plus me-2"></i>Register Now
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Form validation
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+
+// Add animation to form elements
+document.querySelectorAll('.form-control, .form-select').forEach(element => {
+    element.addEventListener('focus', function() {
+        this.parentElement.classList.add('animate__animated', 'animate__pulse');
+    });
+    
+    element.addEventListener('blur', function() {
+        this.parentElement.classList.remove('animate__animated', 'animate__pulse');
+    });
+});
+
+document.getElementById('viewMessagesForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const username = document.getElementById('viewUsername').value;
+    if (username) {
+        window.location.href = "{{ url_for('view_messages', username='') }}".replace('username=', 'username=' + username);
+    }
+});
+</script>
+{% endblock %} 
